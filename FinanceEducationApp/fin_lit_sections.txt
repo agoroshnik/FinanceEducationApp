@@ -1,0 +1,9 @@
+section_no,section_name
+1,College costs and financial aid
+2,General college info
+3,General finance info
+4,College loans or scholarships
+5,College application process
+6,Spending / Savings / Budgeting
+7,College application process
+8,College tests (SAT/ACT)

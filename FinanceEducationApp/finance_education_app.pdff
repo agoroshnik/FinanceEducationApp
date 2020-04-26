@@ -1,0 +1,204 @@
+
+from flask import Flask, session, redirect, url_for, escape, request
+from datetime import date
+app = Flask(__name__)
+app.secret_key = 'any random string'
+#app.config["DEBUG"] = True
+
+@app.route('/thankyou')
+def thankyou():
+    return """
+    <html>
+        <h1>Hello from Ben!</h1>
+        <h2>Your answers have been recorded</h2>
+    </html>
+    """
+@app.route('/', methods = ['GET', 'POST'])
+@app.route('/index', methods = ['GET', 'POST'])
+def index():
+    if 'usernameTest' in session:
+        username = session['usernameTest']
+        if request.method == 'POST':
+            with open("FinLiteracyAnswers.csv","a+") as fo:
+                fo.writelines(username+",fin_literacy_self_ratings,"+request.form['Q1']+","+request.form['Q2']+","+request.form['Q3']+","+request.form['Q4'] +","+request.form['Q5']+","+request.form['Q6']+","+request.form['Q7']+","+request.form['Q8']+"\r\n")
+                fo.close()
+            return redirect(url_for('thankyou'))
+        else:
+            return """
+            <html>
+                <h1>Please answer the following questions</h1><br>
+
+                <form action = "" method = "post">
+                    <h2>How familiar are you with college costs and financial aid?</h2>
+                    <p><input type="radio" name="Q1" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q1" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q1" value="3">Not familiar<br>
+                    <input type="radio" name="Q1" value="4">Not sure</p>
+
+                    <h2>How familiar are you with general college information (EFC, SUNY, CUNY)? </h2>
+                    <p><input type="radio" name="Q2" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q2" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q2" value="3">Not familiar<br>
+                    <input type="radio" name="Q2" value="4">Not sure</p>
+
+                    <h2>How familiar are you with general finance information (Stocks, Risk vs reward)? </h2>
+                    <p><input type="radio" name="Q3" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q3" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q3" value="3">Not familiar<br>
+                    <input type="radio" name="Q3" value="4">Not sure</p>
+
+                    <h2>How familiar are you with diferent college loans and scholarships? </h2>
+                    <p><input type="radio" name="Q4" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q4" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q4" value="3">Not familiar<br>
+                    <input type="radio" name="Q4" value="4">Not sure</p>
+
+                    <h2>How familiar are you with the college application process? </h2>
+                    <p><input type="radio" name="Q5" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q5" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q5" value="3">Not familiar<br>
+                    <input type="radio" name="Q5" value="4">Not sure</p>
+
+                    <h2>How familiar are you with spending, saving, and budgeting? </h2>
+                    <p><input type="radio" name="Q6" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q6" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q6" value="3">Not familiar<br>
+                    <input type="radio" name="Q6" value="4">Not sure</p>
+
+                    <h2>what grade are you in? </h2>
+                    <p><input type="radio" name="Q7" value="1" default>Grade 9 (Freshman)<br>
+                    <input type="radio" name="Q7" value="2">Grade 10 (Sophomore)<br>
+                    <input type="radio" name="Q7" value="3">Grade 11 (Junior)<br>
+                    <input type="radio" name="Q7" value="4">Grade 12 (Senior)</p>
+
+                    <h2>Do you need help with preparing for college tests?? </h2>
+                    <p><input type="radio" name="Q8" value="1" default>Yes, but I haven't started yet<br>
+                    <input type="radio" name="Q8" value="2">Yes, I just started <br>
+                    <input type="radio" name="Q8" value="3">Yes, I have been preparing for a long time<br>
+                    <input type="radio" name="Q8" value="4">I don't need help preparing for college tests</p>
+
+                    <h2><p><input type = submit value = "Submit Answers"></p></h2>
+                </form>
+
+
+                <br><br>
+                Logged in as {uname}
+                <br>
+                <b><a href = '/logout'>click here to log out</a></b>
+            </html>
+            """.format(uname=username)
+    return """
+    <html>
+        <h2>You are not logged in</h2>
+        <br>
+        <a href = '/login'></b> click here to log in</b></a>
+    </html>
+    """
+
+@app.route('/login', methods = ['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        session['usernameTest'] = request.form['uname']
+        with open("logins.csv","a+") as fo:
+            fo.writelines(request.form['uname']+","+str(date.today())+"\r\n")
+            fo.close()
+        return redirect(url_for('index'))
+    return '''
+    <html>
+        <h1>Hello from Ben!</h1>
+        <h2>Enter your user name</h2>
+
+        <form action = "" method = "post">
+            <p><input type = text name = uname></p>
+            <p><input type = submit value = Login></p>
+        </form>
+    </html>
+    '''
+
+@app.route('/logout')
+def logout():
+   # remove the username from the session if it is there
+   session.pop('usernameTest', None)
+   return redirect(url_for('index'))
+
+@app.route('/daily_question', methods = ['GET', 'POST'])
+def daily_question():
+    if 'usernameTest' in session:
+        username = session['usernameTest']
+        if request.method == 'POST':
+            with open("FinLiteracyAnswers.csv","a+") as fo:
+                fo.writelines(username+",fin_literacy_self_ratings,"+request.form['Q1']+","+request.form['Q2']+","+request.form['Q3']+","+request.form['Q4'] +","+request.form['Q5']+","+request.form['Q6']+","+request.form['Q7']+","+request.form['Q8']+"\r\n")
+                fo.close()
+            return redirect(url_for('thankyou'))
+        else:
+            return """
+            <html>
+                <h1>Please answer the following questions</h1><br>
+
+                <form action = "" method = "post">
+                    <h2>How familiar are you with college costs and financial aid?</h2>
+                    <p><input type="radio" name="Q1" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q1" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q1" value="3">Not familiar<br>
+                    <input type="radio" name="Q1" value="4">Not sure</p>
+
+                    <h2>How familiar are you with general college information (EFC, SUNY, CUNY)? </h2>
+                    <p><input type="radio" name="Q2" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q2" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q2" value="3">Not familiar<br>
+                    <input type="radio" name="Q2" value="4">Not sure</p>
+
+                    <h2>How familiar are you with general finance information (Stocks, Risk vs reward)? </h2>
+                    <p><input type="radio" name="Q3" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q3" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q3" value="3">Not familiar<br>
+                    <input type="radio" name="Q3" value="4">Not sure</p>
+
+                    <h2>How familiar are you with diferent college loans and scholarships? </h2>
+                    <p><input type="radio" name="Q4" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q4" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q4" value="3">Not familiar<br>
+                    <input type="radio" name="Q4" value="4">Not sure</p>
+
+                    <h2>How familiar are you with the college application process? </h2>
+                    <p><input type="radio" name="Q5" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q5" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q5" value="3">Not familiar<br>
+                    <input type="radio" name="Q5" value="4">Not sure</p>
+
+                    <h2>How familiar are you with spending, saving, and budgeting? </h2>
+                    <p><input type="radio" name="Q6" value="1" default>Very familiar<br>
+                    <input type="radio" name="Q6" value="2">Somewhat familiar<br>
+                    <input type="radio" name="Q6" value="3">Not familiar<br>
+                    <input type="radio" name="Q6" value="4">Not sure</p>
+
+                    <h2>what grade are you in? </h2>
+                    <p><input type="radio" name="Q7" value="1" default>Grade 9 (Freshman)<br>
+                    <input type="radio" name="Q7" value="2">Grade 10 (Sophomore)<br>
+                    <input type="radio" name="Q7" value="3">Grade 11 (Junior)<br>
+                    <input type="radio" name="Q7" value="4">Grade 12 (Senior)</p>
+
+                    <h2>Do you need help with preparing for college tests?? </h2>
+                    <p><input type="radio" name="Q8" value="1" default>Yes, but I haven't started yet<br>
+                    <input type="radio" name="Q8" value="2">Yes, I just started <br>
+                    <input type="radio" name="Q8" value="3">Yes, I have been preparing for a long time<br>
+                    <input type="radio" name="Q8" value="4">I don't need help preparing for college tests</p>
+
+                    <h2><p><input type = submit value = "Submit Answers"></p></h2>
+                </form>
+
+
+                <br><br>
+                Logged in as {uname}
+                <br>
+                <b><a href = '/logout'>click here to log out</a></b>
+            </html>
+            """.format(uname=username)
+    else:
+        return """
+        <html>
+            <h2>You are not logged in</h2>
+            <br>
+            <a href = '/login'></b> click here to log in</b></a>
+        </html>
+        """

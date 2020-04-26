@@ -1,0 +1,9 @@
+section_no,question_no,question_text,answer1_text,answer2_text,answer3_text,answer4_text
+1,0,How familiar are you with college costs and financial aid?,Very familiar,Somewhat familiar,Not familiar,Not sure
+2,0,How familiar are you with general college information (EFC / SUNY / CUNY)?,Very familiar,Somewhat familiar,Not familiar,Not sure
+3,0,How familiar are you with general finance information (Stocks / Risk vs reward)?,Very familiar,Somewhat familiar,Not familiar,Not sure
+4,0,How familiar are you with diferent college loans and scholarships?,Very familiar,Somewhat familiar,Not familiar,Not sure
+5,0,How familiar are you with the college application process?,Very familiar,Somewhat familiar,Not familiar,Not sure
+6,0,How familiar are you with spending / saving / budgeting?,Very familiar,Somewhat familiar,Not familiar,Not sure
+7,0,What grade are you in?,Grade 9 (Freshman),Grade 10 (Sophomore),Grade 11 (Junior),Grade 12 (Senior)
+8,0,Do you need help with preparing for college tests?,I don't need help preparing for college tests,Yes I have been preparing for a long time,Yes I just started,Yes but I haven't started yet
